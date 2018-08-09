@@ -11,7 +11,6 @@
 "use strict";
 
 var twentyNine = document.createDocumentFragment();
-alert(twentyNine);
 var thirty = document.createDocumentFragment();
 var thirtyOne = document.createDocumentFragment();
 
@@ -25,7 +24,7 @@ function removeSelectDefaults() {
 }
 
 //function to set up document fragments for days of month
-function setUpDays(){
+function setUpDays() {
     //get the days option tage
     var dates = document.getElementById("delivDy").getElementsByTagName("option");
     twentyNine.appendChild(dates[28].cloneNode(true));
@@ -40,28 +39,65 @@ function setUpDays(){
 function updateDays() {
     var deliveryDay = document.getElementById("delivDy");
     var dates = deliveryDay.getElementsByTagName("option");
-    var deliveryMonth = document.getElementById("delivyMo");
+    var deliveryMonth = document.getElementById("delivMo");
     var deliveryYear = document.getElementById("delivyYr");
     var selectedMonth = deliveryMonth.options[deliveryMonth.selectedIndex].value;
     while (dates[28]) {
         deliveryDay.removeChild(dates[28]);
     }
-    if (deliveryMonth.selectedIndex === -1) {
-        deliveryMonth.selectedIndex = 0;
+    if (deliveryYear.selectedIndex === -1) {
+        deliveryYear.selectedIndex = 0;
     }
     // if feb and 2020 - leap year twentyNine
-    
-    //else 30 day month - thirty
-    
-    //else 31 day month - thirtyOne
-        
+    if (selectedMonth === "2" && deliveryYear.options[deliveryYear.selectedIndex].value === "2020") {
+        deliveryDay.appendChild(twentyNine.cloneNode(true));
+    }
+    // else 30 day month - thirty
+    else if (selectedMonth === "4" || selectedMonth === "6" || selectedMonth === "9" || selectedMonth === "11") {
+        deliveryDay.appendChild(thirty.cloneNode(true));
+    }
+    // else 31 day month - thirtyOne
+    else if (selectedMonth === "1" || selectedMonth === "3" || selectedMonth === "5" || selectedMonth === "7" || selectedMonth === "8" || selectedMonth === "10" || selectedMonth === "12") {
+        deliveryDay.appendChild(thirtyOne.cloneNode(true));
+    }
 }
 
 //functions to run on page load
 function setUpPage() {
     removeSelectDefaults();
-//    setUpDays();
-//    updateDays();
+    setUpDays();
+    createEventListeners();
+}
+// function to see if custom message is checked
+function autoCheckCustom() {
+    var messageBox = document.getElementById("customText");
+
+    if (messageBox.value !== "" && messageBox.value !== messageBox.placeholder) { //textarea contains user inputed characters 
+        document.getElementById("custom").checked = "checked";
+    } else { // textarea is empty
+        document.getElementById("custom").checked = "";
+    }
+}
+// function to create event listeners
+function createEventListeners() {
+    var deliveryMonth = document.getElementById("delivMo");
+    if (deliveryMonth.addEventListener) {
+        deliveryMonth.addEventListener("change", updateDays, false);
+    } else if (deliveryMonth.attachEvent) {
+        deliveryMonth.attachEvent("onchange", updateDays);
+    }
+    var deliveryYear = document.getElementById("delivYr");
+    if (deliveryYear.addEventListener) {
+        deliveryYear.addEventListener("change", updateDays, false);
+    } else if (deliveryYear.attachEvent) {
+        deliveryYear.attachEvent("onchange", updateDays);
+    }
+    var messageBox = document.getElementById("customText");
+    if (messageBox.addEventListener) {
+        messageBox.addEventListener("change", autoCheckCustom, false);
+    } else if (messageBox.attachEvent) {
+        messageBox.attachEvent("onchange", autoCheckCustom);
+    }
 }
 
 //enable load event handlers
